@@ -499,4 +499,4 @@ plot(elev$date, elev$wind.sp, type='l')
 
 ![](README_files/figure-html/unnamed-chunk-29-1.png)<!-- -->
 
-Before 8.18, the general trend is increasing, but decreases rapidly decreases around 8.18 or 8.19. After that, it recovers until 8.25 and then drops again.
+Before 8.18, the general trend of wind speed is increasing, but decreases rapidly around 8.18 or 8.19. After that, it recovers until 8.25 and then drops again. but for temperature, it seens to be a horizontal line, hence probably there is no correlation between them.
