@@ -1,4 +1,11 @@
 ---
+output: 
+  html_document: 
+    keep_md: yes
+editor_options: 
+  chunk_output_type: inline
+---
+---
 title: "Lab_04"
 author: "NickyNie"
 date: "9/17/2021"
