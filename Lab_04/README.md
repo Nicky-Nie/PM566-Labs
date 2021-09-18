@@ -6,11 +6,19 @@ editor_options:
   chunk_output_type: inline
 ---
 ---
-title: "Lab_04"
+title: "README"
 author: "NickyNie"
-date: "9/17/2021"
-output: html_document
+date: "2021/9/18"
+output:
+  github_document:
+    keep_html: false
+    html_preview: false
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
 ```{r packages}
 library(data.table)
 library(tidyverse)
