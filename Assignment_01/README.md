@@ -584,7 +584,7 @@ pal <- colorFactor(c("Blue","DarkOrange"), domain = all_data$Year)
 #  addProviderTiles('CartoDB.Positron') %>% 
 #  addCircleMarkers(lat=~lat,lng=~lon, opacity=1, fillOpacity=1, radius=1,color = ~pal(all_data$Year))
 ```
-The distribution of sites is radial centralized around two sites: Los Angeles and San Francisco. And more are located near the coastline than the inner land.
+(I hide this part since the html not shown here is too long)The distribution of sites is radial centralized around two sites: Los Angeles and San Francisco. And more are located near the coastline than the inner land.
 
 # Step 4
 ## Check for missing values
@@ -663,6 +663,7 @@ ggplot(
 ```
 
 ![](README_files/figure-html/state-1.png)<!-- -->
+
 From the graph, we can see that generally for California state, the concentration of PM2.5 is dropped from year 2004 to year 2019
 
 ## county
@@ -676,6 +677,7 @@ ggplot(
 ```
 
 ![](README_files/figure-html/county-1.png)<!-- -->
+
 From the graph, we can see that PM2.5 concentration decreases from 2004 to 2019 in most counties in California, except 8 counties such as Butte, Contra Costa and Manposa.
 
 ## site in Los Angeles
@@ -690,4 +692,5 @@ ggplot(
 ```
 
 ![](README_files/figure-html/site-1.png)<!-- -->
+
 Based on sites in Los Angeles, excluding some sites with missing data, we can see that PM2.5 concentration decreases from 2004 to 2019.
