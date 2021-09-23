@@ -140,6 +140,7 @@ ggplot(
   geom_histogram() +
   facet_zoom(x = concentration <70)
 ```
+
 From the graph, we can see that generally for California state, the concentration of PM2.5 is dropped from year 2004 to year 2019
 
 ## county
@@ -150,6 +151,7 @@ ggplot(
   geom_point() +
   theme(axis.text.x = element_text(angle=90, hjust=1, vjust=1))
 ```
+
 From the graph, we can see that PM2.5 concentration decreases from 2004 to 2019 in most counties in California, except 8 counties such as Butte, Contra Costa and Manposa.
 
 ## site in Los Angeles
@@ -161,4 +163,5 @@ ggplot(
   geom_boxplot() +
   theme(axis.text.x = element_text(angle=90, hjust=1, vjust=1))
 ```
+
 Based on sites in Los Angeles, excluding some sites with missing data, we can see that PM2.5 concentration decreases from 2004 to 2019.
