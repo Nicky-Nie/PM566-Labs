@@ -52,7 +52,7 @@ library(data.table)
 ##     transpose
 ```
 
-#STEP 1:
+# STEP 1:
 
 ## Read Data
 
