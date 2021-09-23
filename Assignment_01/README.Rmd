@@ -107,11 +107,11 @@ all_data <- rename(all_data, lon = SITE_LONGITUDE)
 ```{r leaflet}
 library(leaflet)
 pal <- colorFactor(c("Blue","DarkOrange"), domain = all_data$Year)
-#leaflet(all_data) %>%
-#  addProviderTiles('CartoDB.Positron') %>% 
-#  addCircleMarkers(lat=~lat,lng=~lon, opacity=1, fillOpacity=1, radius=1,color = ~pal(all_data$Year))
+leaflet(all_data) %>%
+  addProviderTiles('CartoDB.Positron') %>% 
+  addCircleMarkers(lat=~lat,lng=~lon, opacity=1, fillOpacity=1, radius=1,color = ~pal(all_data$Year))
 ```
-(I hide this part since the website can not be shown and the things left is too long) The distribution of sites is radial centralized around two sites: Los Angeles and San Francisco. And more are located near the coastline than the inner land.
+The distribution of sites is radial centralized around two sites: Los Angeles and San Francisco. And more are located near the coastline than the inner land.
 
 # Step 4
 ## Check for missing values
