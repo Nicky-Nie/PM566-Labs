@@ -1,0 +1,172 @@
+---
+title: "PM566_Assignment_01"
+author: "NickyNie"
+date: "9/17/2021"
+output: 
+  html_document: 
+    keep_md: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r load}
+library(tidyverse)
+library(data.table)
+```
+
+#STEP 1:
+
+## Read Data
+```{r read_data}
+data_2004 <- data.table::fread("~/Desktop/USC/PM566-Labs/Assignment_01/2004.csv")
+data_2019 <- data.table::fread("~/Desktop/USC/PM566-Labs/Assignment_01/2019.csv")
+```
+
+
+## Check dimension, headers, footers, variable names and types
+
+### Dimension
+```{r dimension} 
+dim(data_2004)
+dim(data_2019)
+```
+
+### Headers
+```{r}
+head(data_2004)
+```
+```{r}
+head(data_2019)
+```
+
+### Footers
+```{r}
+tail(data_2004)
+```
+```{r}
+tail(data_2019)
+```
+### Check Variables for 2004 Data
+```{r}
+str(data_2004)
+```
+```{r}
+summary(data_2004$`Daily Mean PM2.5 Concentration`)
+```
+
+```{r}
+table(data_2004$`Daily Mean PM2.5 Concentration`)
+```
+
+I think that the concentration of PM2.5 should not be negative, so I need to remove all the data that is negative.
+```{r}
+data_2004 <- data_2004[`Daily Mean PM2.5 Concentration`>=0]
+```
+
+```{r}
+summary(data_2004$`Daily Mean PM2.5 Concentration`)
+```
+
+### Check Variables for 2019 Data
+```{r}
+str(data_2019)
+```
+```{r}
+summary(data_2019$`Daily Mean PM2.5 Concentration`)
+```
+```{r}
+table(data_2019$`Daily Mean PM2.5 Concentration`)
+```
+Same as 2004 data, I remove all the data that is less than 0
+```{r}
+data_2019 <- data_2019[`Daily Mean PM2.5 Concentration`>=0]
+```
+
+```{r}
+summary(data_2019$`Daily Mean PM2.5 Concentration`)
+```
+
+# STEP 2
+
+## Combine two datasets
+
+```{r combined and change of variables}
+data_2004[, Year := "2004"]
+data_2019[, Year := "2019"]
+all_data = rbind(data_2004, data_2019)
+all_data = rename(all_data, concentration = `Daily Mean PM2.5 Concentration`)
+all_data = rename(all_data, lat = SITE_LATITUDE)
+all_data = rename(all_data, lon = SITE_LONGITUDE)
+```
+
+# STEP 3
+
+## Creating a map
+```{r leaflet}
+library(leaflet)
+pal <- colorFactor(c("Blue","DarkOrange"), domain = all_data$Year)
+leaflet(all_data) %>%
+  addProviderTiles('CartoDB.Positron') %>% 
+  addCircleMarkers(lat=~lat,lng=~lon, opacity=1, fillOpacity=1, radius=1,color = ~pal(all_data$Year))
+```
+The distribution of sites is radial centralized around two sites: Los Angeles and San Francisco. And more are located near the coastline than the inner land.
+
+# Step 4
+## Check for missing values
+```{r NAs}
+ sum(is.na(all_data$Date))
+ sum(is.na(all_data$concentration))
+ sum(is.na(all_data$`Site Name`))
+ sum(is.na(all_data$COUNTY))
+ sum(is.na(all_data$STATE))
+```
+```{r length}
+length(all_data$`Site Name`)
+```
+```{r proportion}
+p = 331/72036; p
+```
+In step 1, I have deleted all implausible pm2.5 concentration which is less than 0. And for this section, I find that 0.45% site names are missinng, so the plots based on site in Los Angeles may be less convincing.
+
+# Step 5
+## state
+```{r state}
+library(ggforce)
+ggplot( 
+  all_data[!is.na(concentration)], 
+  mapping = aes( x = concentration, fill = Year)) +
+  geom_histogram() +
+  facet_zoom(x = concentration <70)
+```
+From the graph, we can see that generally for California state, the concentration of PM2.5 is dropped from year 2004 to year 2019
+
+## county
+```{r county}
+ggplot( 
+  all_data[!is.na(concentration)], 
+  mapping = aes( y = concentration, x = COUNTY, color = Year)) +
+  geom_point() +
+  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=1))
+```
+From the graph, we can see that PM2.5 concentration decreases from 2004 to 2019 in most counties in California, except 8 counties such as Butte, Contra Costa and Manposa.
+
+## site in Los Angeles
+```{r}
+LA_data = filter(all_data, COUNTY == "Los Angeles")
+ggplot( 
+  LA_data[!is.na(concentration)], 
+  mapping = aes( y = concentration, x = `Site Name`, fill = Year)) +
+  geom_boxplot()
+```
+
+```{r site}
+LA_data = filter(all_data, COUNTY == "Los Angeles")
+ggplot( 
+  LA_data[!is.na(concentration)], 
+  mapping = aes( y = concentration, x = `Site Name`, fill = Year)) +
+  geom_boxplot() +
+  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=1))
+```
+Based on sites in Los Angeles, excluding some sites with missing data, we can see that PM2.5 concentration decreases from 2004 to 2019.
