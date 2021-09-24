@@ -3,9 +3,9 @@ title: "PM566_Assignment_01"
 author: "NickyNie"
 date: "9/22/2021"
 output: 
-  html_document: 
-    keep_md: yes
-  github_document
+  - html_document
+  - github_document
+always_allow_html: true
 ---
 
 ```{r setup, include=FALSE}
@@ -101,6 +101,7 @@ all_data <- rename(all_data, concentration = `Daily Mean PM2.5 Concentration`)
 all_data <- rename(all_data, lat = SITE_LATITUDE)
 all_data <- rename(all_data, lon = SITE_LONGITUDE)
 ```
+
 
 # STEP 3
 
