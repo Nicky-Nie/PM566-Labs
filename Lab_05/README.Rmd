@@ -55,19 +55,147 @@ met <- merge(
 station_avg <- met[,.(
   temp = mean(temp, na.rm = TRUE),
   wind.sp = mean(wind.sp, na.rm = TRUE),
-  atm.press = mean(atm.press, na.rm = TRUE)
+  atm.press = mean(atm.press, na.rm = TRUE),
+  lon_avg = mean(lon, na.rm = TRUE),
+  lat_avg = mean(lat, na.rm = TRUE)
 ), by = USAFID]
 
 ```
 
 identify the median per variable
 ```{r quantile}
-station_avg[,.(
+medians <- station_avg[,.(
   temp_50 = quantile(temp, probs = 0.5, na.rm = TRUE),
   wind.sp_50 = quantile(wind.sp, probs = 0.5, na.rm = TRUE),
   atm.press_50 = quantile(atm.press, probs = 0.5, na.rm = TRUE)
 ) ]
+
+medians
 ```
 
+find stations that are the closest to these (hint: `which.min()`)
+```{r median_temp}
+station_avg[, temp_dist := abs(temp - medians$temp_50)]
+median_temp_station <- station_avg[order(temp_dist)][1]
+median_temp_station
+```
+The median temperature station is  `r median_temp_station$USAFID`
 
+```{r median_wind.sp}
+station_avg[, wind.sp_dist := abs(wind.sp - medians$wind.sp_50)]
+median_wind.sp_station <-station_avg[order(wind.sp_dist)][1]
+median_wind.sp_station 
+```
+The median wind speed station is  `r median_wind.sp_station$USAFID`
+
+```{r median_atm.press}
+station_avg[, atm.press_dist := abs(atm.press - medians$atm.press_50)]
+median_atm.press_station <- station_avg[order(atm.press_dist)][1]
+median_atm.press_station
+```
+The median atmospheric pressure station is  `r median_atm.press_station$USAFID`
+
+# Question 2
+recover the state variable, by MERGING
+```{r}
+station_avg <- merge(
+  x = station_avg, 
+  y = stations, 
+  by.x = "USAFID", 
+  by.y = "USAF", 
+  all.x = TRUE, 
+  all.y = FALSE
+  )
+```
+
+compute the medians per state
+```{r}
+station_avg[, temp_50 := quantile(temp, probs = 0.5, na.rm = TRUE),by = STATE]
+station_avg[, wind.sp_50 := quantile(wind.sp, probs = 0.5, na.rm = TRUE),by = STATE]
+```
+
+```{r}
+station_avg[, eudist:= sqrt(
+  (temp - temp_50)^2+(wind.sp - wind.sp_50)^2
+)]
+station_avg
+```
+Find the most representative station per state
+```{r}
+station_state <- station_avg[ , .SD[which.min(eudist)], by = STATE]
+station_state
+```
+# Question 3
+find the midpoint of each state
+```{r midpoint}
+mid <- met[, .(
+  lon_50 = quantile(lon, probs = 0.5, na.rm = TRUE),
+  lat_50 = quantile(lat, probs = 0.5, na.rm = TRUE)
+), by = STATE]
+```
+
+```{r}
+station_avg <- merge(
+  x = station_avg,
+  y = mid,
+  by = "STATE"
+)
+```
+
+```{r}
+station_avg[, mid_eudist:= sqrt(
+  (lat_avg - lat_50)^2+(lon_avg - lon_50)^2
+)]
+station_avg
+```
+```{r mid_station}
+mid_station_state <- station_avg[ , .SD[which.min(mid_eudist)], by = STATE]
+mid_station_state
+```
+merge data of median and mid stations
+```{r merge_stations}
+station_state[, type := "median"]
+mid_station_state[, type := "mid"]
+target_stations <- rbind(station_state, mid_station_state, fill = TRUE)
+```
+
+draw the map
+```{r leaflet}
+library(leaflet)
+pal <- colorFactor(c("Blue","DarkOrange"), domain = target_stations$type)
+leaflet() %>% 
+  addProviderTiles('CartoDB.Positron') %>% 
+  addCircles(
+    data = target_stations,
+    lat = ~lat_avg, lng = ~lon_avg, 
+    opacity = 1, fillOpacity = 1, radius = 400, color = ~pal(target_stations$type)
+    )
+```
+# Question 4
+```{r}
+met[, state_temp := mean(temp, na.rm = TRUE),by = STATE]
+met[, state_wind.sp := mean(wind.sp, na.rm = TRUE),by = STATE]
+met[, state_atm.press := mean(atm.press, na.rm = TRUE),by = STATE]
+met[, temp_cat := fifelse(
+  state_temp < 20, "low-temp", 
+  fifelse(state_temp < 25, "mid-temp", "high-temp"))
+  ]
+```
+
+make sure we do not have NAs
+```{r}
+table(met$temp_cat, useNA = "always")
+```
+
+```{r summarize}
+tab <- met[, .(
+  N_entries  = .N,
+  N_stations = length(unique(USAFID)),
+  avg_temp = mean(state_temp),
+  avg_wind.sp = mean(state_wind.sp),
+  avg_atm.press = mean(state_atm.press)
+), by = temp_cat]
+
+knitr::kable(tab)
+```
 
