@@ -168,9 +168,11 @@ leaflet() %>%
   addCircles(
     data = target_stations,
     lat = ~lat_avg, lng = ~lon_avg, 
-    opacity = 1, fillOpacity = 1, radius = 400, color = ~pal(target_stations$type)
-    )
+    opacity = 1, fillOpacity = 1, radius = 400, color = ~pal(target_stations$type)) %>%
+    addLegend('bottomleft', pal=pal, values=target_stations$type,
+          title='Sites', opacity=1)
 ```
+
 # Question 4
 ```{r}
 met[, state_temp := mean(temp, na.rm = TRUE),by = STATE]

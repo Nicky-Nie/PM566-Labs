@@ -1,0 +1,34 @@
+---
+title: "Lab_06"
+author: "NickyNie"
+date: "10/1/2021"
+output: 
+  - html_document
+  - github_document
+always_allow_html: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r library}
+library(dplyr)
+library(tidytext)
+library(tidyverse)
+```
+
+## Load data
+```{r load}
+med_trans <- read.csv("https://raw.githubusercontent.com/USCbiostats/data-science-data/master/00_mtsamples/mtsamples.csv") 
+```
+
+# Question 1
+```{r}
+med_trans %>%
+  unnest_tokens(token, medical_specialty, token = "sentences") %>%
+  count(token) %>%
+  ggplot(aes(n, fct_reorder(token, n)))+
+  geom_col()
+```
+We have 40 categories and they are not evenly distributed. I think some of them may have some interrelationship and no overlapping is found.
