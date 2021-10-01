@@ -86,7 +86,9 @@ med_trans %>%
   geom_col()
 ```
 
-![](README_files/figure-gfm/bigrams-1.png)<!-- --> \#\# trigrams
+![](README_files/figure-gfm/bigrams-1.png)<!-- --> 
+
+## trigrams
 
 ``` r
 med_trans %>%

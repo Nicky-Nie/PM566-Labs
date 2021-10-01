@@ -16,6 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(dplyr)
 library(tidytext)
 library(tidyverse)
+library(tidyr)
 ```
 
 ## Load data
@@ -31,4 +32,105 @@ med_trans %>%
   ggplot(aes(n, fct_reorder(token, n)))+
   geom_col()
 ```
+
 We have 40 categories and they are not evenly distributed. I think some of them may have some interrelationship and no overlapping is found.
+
+# Question 2
+```{r token_transcription}
+med_trans %>%
+  unnest_tokens(token, transcription, token = "words") %>%
+  count(token, sort = TRUE) %>%
+  top_n(20,n) %>%
+  ggplot(aes(n, fct_reorder(token, n)))+
+  geom_col()
+```
+
+The top frequent words are some link words which may not be useful in our analysis or training, hence anti_join of stop words should be used in these data.
+
+# Question 3
+```{r stop_words}
+# The method to remove numbers I considered before the lab
+number <- as.character(c(0:100))
+num <- data.frame(number)
+med_trans %>%
+  unnest_tokens(token, transcription, token = "words") %>%
+  anti_join(stop_words, by = c("token" = "word")) %>%
+  anti_join(num, by = c("token" = "number")) %>%
+  # method to remove numbers in lab
+  # filter(!grepl(pattern = "^[0-9]+$", x = word))
+  count(token, sort = TRUE) %>%
+  top_n(20,n) %>%
+  ggplot(aes(n, fct_reorder(token, n)))+
+  geom_col()
+```
+
+The link words and numbers(I set numbers from 0 to 100) all disappear in my graph of top 20 frequently used words. All the words listed here give us a more clear insight about the text since words like "patients" "diagnosis" refer to something in medical records.
+
+# Question 4
+## bigrams
+```{r bigrams}
+med_trans %>%
+  unnest_ngrams(ngram, transcription, n = 2) %>%
+  count(ngram, sort = TRUE) %>%
+  top_n(20,n) %>%
+  ggplot(aes(n, fct_reorder(ngram, n)))+
+  geom_col()
+```
+## trigrams
+```{r trigrams}
+med_trans %>%
+  unnest_ngrams(ngram, transcription, n = 3) %>%
+  count(ngram, sort = TRUE) %>%
+  top_n(20,n) %>%
+  ggplot(aes(n, fct_reorder(ngram, n)))+
+  geom_col()
+```
+
+A lot of prepositions phrases such as "of the" "in the" "to the" are not in the top rank of most frequently used phrases any more.
+
+# Question 5
+```{r count_compare, cache = TRUE, warning = FALSE}
+bigram <- med_trans %>%
+  unnest_ngrams(bigram, transcription, n = 2)%>%
+  separate (bigram, into = c("word1", "word2"), sep = " ")
+```
+
+```{r}
+bigram %>%
+  select(word1, word2) %>%
+  filter(word1 == "history") %>%
+  filter(!(word2 %in% stop_words$word) & !grepl(pattern = "^[0-9]+$", word2)) %>%
+  count(word2, sort =TRUE)
+```
+```{r}
+bigram %>%
+  select(word1, word2) %>%
+  filter(word2 == "history") %>%
+  filter(!(word1 %in% stop_words$word) & !grepl(pattern = "^[0-9]+$", word1)) %>%
+  count(word1, sort =TRUE)
+```
+
+
+# Question 6
+```{r within_specialty_1}
+med_trans %>%
+  unnest_tokens(token, transcription, token = "words") %>%
+  anti_join(stop_words, by = c("token" = "word")) %>%
+  anti_join(num, by = c("token" = "number")) %>%
+  group_by(medical_specialty) %>%
+  count(token, sort = TRUE) %>%
+  top_n(1,n) 
+```
+
+```{r within_specialty_5}
+med_trans %>%
+  unnest_tokens(token, transcription, token = "words") %>%
+  anti_join(stop_words, by = c("token" = "word")) %>%
+  anti_join(num, by = c("token" = "number")) %>%
+  group_by(medical_specialty) %>%
+  count(token) %>%
+  top_n(5,n)
+```
+
+# Question 7
+From question 6, we can see that "patients" is most frquesntly used in most of specialty categories,  but for "Ophthalmology", the top 1 word is "eye"; for "Podiatry" is "foot"; for "Sleep Medicine" is "sleep", for "Endocrinology" is "thyroid"; for "Dermatology" is "skin", and for "Lab Medicine - Pathology" is "tumor". Those words give us a direct hint about what exactly the meanning of each medical specialty is when we didn't know the terminology before. 
