@@ -11,13 +11,15 @@ always_allow_html: true
 ```{r setup, include=FALSE, cache = TRUE, warning = FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(data.table)
 library(dplyr)
 ```
 
+# Data Wrangling
 ## Download data
 ```{r download}
-ind <- read.csv("chs_individual.csv")
-reg <- read.csv("chs_regional.csv")
+ind <- fread("chs_individual.csv")
+reg <- fread("chs_regional.csv")
 ```
 
 ## Merge datasets
@@ -25,7 +27,42 @@ reg <- read.csv("chs_regional.csv")
 data <- merge(
   x = ind,
   y = reg,
-  by ="townname"
+  by ="townname",
+  all.x = TRUE,
+  all.y = FALSE
 )
 ```
+
+## Checking duplications
+```{r row_nuumber}
+dim(ind)
+dim(reg)
+dim(data)
+```
+No duplication
+
+## Impute NAs
+The key variables are bmi, fev, smoke and gasstove, check for NAs
+```{r check_NAs}
+sum(is.na(data$bmi))
+sum(is.na(data$fev))
+sum(is.na(data$smoke))
+sum(is.na(data$gasstove))
+```
+
+```{r impute}
+data[, m_bmi := mean(bmi, na.rm = TRUE), by = .(male, hispanic)]
+data[, bmi := ifelse(is.na(bmi), m_bmi, bmi)]
+data[, m_fev := mean(fev, na.rm = TRUE), by = .(male, hispanic)]
+data[, fev := ifelse(is.na(fev), m_fev, fev)]
+data[, m_smoke := mean(smoke, na.rm = TRUE), by = .(male, hispanic)]
+data[, smoke := ifelse(is.na(smoke), m_smoke, smoke)]
+data[, m_gas := mean(gasstove, na.rm = TRUE), by = .(male, hispanic)]
+data[, gasstove := ifelse(is.na(gasstove), m_gas, gasstove)]
+sum(is.na(data$bmi))
+sum(is.na(data$fev))
+sum(is.na(data$smoke))
+sum(is.na(data$gasstove))
+```
+
 
