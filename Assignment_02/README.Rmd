@@ -1,0 +1,31 @@
+---
+title: "Assignment_02"
+author: "NickyNie"
+date: "10/4/2021"
+output: 
+  - html_document
+  - github_document
+always_allow_html: true
+---
+
+```{r setup, include=FALSE, cache = TRUE, warning = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(dplyr)
+```
+
+## Download data
+```{r download}
+ind <- read.csv("chs_individual.csv")
+reg <- read.csv("chs_regional.csv")
+```
+
+## Merge datasets
+```{r merge}
+data <- merge(
+  x = ind,
+  y = reg,
+  by ="townname"
+)
+```
+
