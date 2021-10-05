@@ -55,16 +55,16 @@ sum(is.na(data$pm25_mass))
 ```
 
 ```{r impute}
-data[, m_bmi := mean(bmi, na.rm = TRUE), by = .(male, hispanic)]
-data[, bmi := ifelse(is.na(bmi), m_bmi, bmi)]
-data[, m_fev := mean(fev, na.rm = TRUE), by = .(male, hispanic)]
-data[, fev := ifelse(is.na(fev), m_fev, fev)]
-data[, m_smoke := mean(smoke, na.rm = TRUE), by = .(male, hispanic)]
-data[, smoke := ifelse(is.na(smoke), m_smoke, smoke)]
-data[, m_gas := mean(gasstove, na.rm = TRUE), by = .(male, hispanic)]
+data[, m_bmi    := mean(bmi, na.rm = TRUE), by = .(male, hispanic)]
+data[, bmi      := ifelse(is.na(bmi), m_bmi, bmi)]
+data[, m_fev    := mean(fev, na.rm = TRUE), by = .(male, hispanic)]
+data[, fev      := ifelse(is.na(fev), m_fev, fev)]
+data[, m_smoke  := mean(smoke, na.rm = TRUE), by = .(male, hispanic)]
+data[, smoke    := ifelse(is.na(smoke), m_smoke, smoke)]
+data[, m_gas    := mean(gasstove, na.rm = TRUE), by = .(male, hispanic)]
 data[, gasstove := ifelse(is.na(gasstove), m_gas, gasstove)]
 data[, m_asthma := mean(asthma, na.rm = TRUE), by = .(male, hispanic)]
-data[, asthma := ifelse(is.na(asthma), m_asthma, asthma)]
+data[, asthma   := ifelse(is.na(asthma), m_asthma, asthma)]
 sum(is.na(data$bmi))
 sum(is.na(data$fev))
 sum(is.na(data$smoke))
@@ -82,8 +82,8 @@ data <- data[, obesity_level := fifelse(bmi<14, "Underweight",
 knit a table
 ```{r table}
 tab <- data[, .(
-  Max_BMI = max(bmi),
-  Min_BMI = min(bmi),
+  Max_BMI      = max(bmi),
+  Min_BMI      = min(bmi),
   Total_Number = .N
 ), by = obesity_level]
 
@@ -100,8 +100,8 @@ data <- data[, smoke_gas_exposure := fifelse(smoke == 0 & gasstove == 0, "No_Exp
 table of town
 ```{r}
 tab <- data[, .(
-  avg_fev = mean(fev),
-  sd_fev = sd(fev),
+  avg_fev    = mean(fev),
+  sd_fev     = sd(fev),
   avg_asthma = mean(asthma),
   sd_asthma = sd(asthma)
 ), by = townname]
@@ -112,8 +112,8 @@ knitr::kable(tab)
 table of sex
 ```{r}
 tab <- data[, .(
-  avg_fev = mean(fev),
-  sd_fev = sd(fev),
+  avg_fev    = mean(fev),
+  sd_fev     = sd(fev),
   avg_asthma = mean(asthma),
   sd_asthma = sd(asthma)
 ), by = male]
@@ -124,8 +124,8 @@ knitr::kable(tab)
 table of obesity level
 ```{r}
 tab <- data[, .(
-  avg_fev = mean(fev),
-  sd_fev = sd(fev),
+  avg_fev    = mean(fev),
+  sd_fev     = sd(fev),
   avg_asthma = mean(asthma),
   sd_asthma = sd(asthma)
 ), by = obesity_level]
@@ -136,8 +136,8 @@ knitr::kable(tab)
 table of smoke_gas_exposure
 ```{r}
 tab <- data[, .(
-  avg_fev = mean(fev),
-  sd_fev = sd(fev),
+  avg_fev    = mean(fev),
+  sd_fev     = sd(fev),
   avg_asthma = mean(asthma),
   sd_asthma = sd(asthma)
 ), by = smoke_gas_exposure]
