@@ -42,13 +42,14 @@ dim(data)
 No duplication
 
 ## Impute NAs
-The key variables are bmi, fev, asthma, smoke and gasstove, check for NAs
+The key variables are bmi, fev, asthma, smoke pm2.5 mass and gasstove, check for NAs
 ```{r check_NAs}
 sum(is.na(data$bmi))
 sum(is.na(data$fev))
 sum(is.na(data$smoke))
 sum(is.na(data$gasstove))
 sum(is.na(data$asthma))
+sum(is.na(data$pm25_mass))
 ```
 
 ```{r impute}
@@ -141,3 +142,33 @@ tab <- data[, .(
 
 knitr::kable(tab)
 ```
+
+# Looking at the data
+check for dimension
+```{r dim}
+dim(data)
+```
+
+headers and footers
+```{r headers}
+head(data)
+```
+
+
+
+```{r footer}
+tail(data)
+```
+
+variable
+```{r variable}
+str(data)
+```
+key variable
+```{r key}
+summary(data$fev)
+summary(data$bmi)
+summary(data$smoke_gas_exposure)
+summary(data$pm25_mass)
+```
+
