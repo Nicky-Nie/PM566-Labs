@@ -220,8 +220,27 @@ ggplot(
 
 For all bmi categories, the order of number of counts from greater to smaller is both_exposure, gas_exposure, no_exposure and smoke_exposure.
 
-Statistical summary graphs of FEV by BMI and FEV by smoke/gas exposure category.
+### Statistical summary graphs of FEV by BMI and FEV by smoke/gas exposure category.
+```{r sum_bmi}
+ggplot(
+  data[!is.na(fev) & !is.na(obesity_level)],
+  mapping = aes(x = obesity_level, y = fev))+
+  stat_summary(fun.min = min, fun.max = max, fun = median)+
+  labs(title = "statistical summary of FEV by BMI")
+```
 
-A leaflet map showing the concentrations of PM2.5 mass in each of the CHS communities.
+The category of normal has a relatively small median but with greatest range. And for category of overweight, it has a relatively great median but with a small range.
+
+```{r sum_exp}
+ggplot(
+  data[!is.na(fev) & !is.na(smoke_gas_exposure)],
+  mapping = aes(x = smoke_gas_exposure, y = fev))+
+  stat_summary(fun.min = min, fun.max = max, fun = median)+
+  labs(title = "statistical summary of FEV by smoke-gas-exposure")
+```
+
+It seems that based on exposure categories, the medians are almost same for all of them.
+
+### A leaflet map showing the concentrations of PM2.5 mass in each of the CHS communities.
 
 Choose a visualization to examine whether PM2.5 mass is associated with FEV.
