@@ -494,9 +494,10 @@ summary(data_2019$`Daily Mean PM2.5 Concentration`)
 data_2004[, Year := "2004"]
 data_2019[, Year := "2019"]
 all_data <- rbind(data_2004, data_2019)
-all_data <- rename(all_data, concentration = `Daily Mean PM2.5 Concentration`)
-all_data <- rename(all_data, lat = SITE_LATITUDE)
-all_data <- rename(all_data, lon = SITE_LONGITUDE)
+all_data <- rename(all_data, c(
+                   concentration = `Daily Mean PM2.5 Concentration`,
+                   lat = SITE_LATITUDE,
+                   lon = SITE_LONGITUDE))
 ```
 
 # STEP 3
@@ -592,7 +593,7 @@ concentration of PM2.5 is dropped from year 2004 to year 2019
 ggplot( 
   all_data[!is.na(concentration)], 
   mapping = aes( y = concentration, x = COUNTY, color = Year)) +
-  geom_point() +
+  geom_jitter() +
   theme(axis.text.x = element_text(angle=90, hjust=1, vjust=1))
 ```
 
