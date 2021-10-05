@@ -244,10 +244,10 @@ It seems that based on exposure categories, the medians are almost same for all 
 ### A leaflet map showing the concentrations of PM2.5 mass in each of the CHS communities.
 ```{r leaflet}
 pal = colorNumeric(c('green','red'), domain=data$pm25_mass)
-#leaflet(data)%>%
-#  addProviderTiles('CartoDB.Positron')%>%
-#  addCircles(lat =~ lat, lng =~ lon, color =~ pal(pm25_mass), opacity=1, fillOpacity=1, radius=500)%>%
-#  addLegend("bottomleft", pal = pal, values = data$pm25_mass, title="concentration of PM2.5 Mass in each communities", opacity=1)
+leaflet(data)%>%
+  addProviderTiles('CartoDB.Positron')%>%
+  addCircles(lat =~ lat, lng =~ lon, color =~ pal(pm25_mass), opacity=1, fillOpacity=1, radius=500)%>%
+  addLegend("bottomleft", pal = pal, values = data$pm25_mass, title="concentration of PM2.5 Mass in each communities", opacity=1)
 ```
 The pm2.5 mass is radial centered and greatest around Riverside, probably because of the mountain fire.
 
