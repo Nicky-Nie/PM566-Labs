@@ -14,6 +14,7 @@ library(tidyverse)
 library(data.table)
 library(dplyr)
 library(leaflet)
+library(ggforce)
 ```
 
 # Data Wrangling
@@ -207,7 +208,17 @@ ggplot(
 ```
 In this graph, it seems that all the the distribution for all the categories is normal distribution.
 
-Barchart of BMI by smoke/gas exposure.
+### Barchart of BMI by smoke/gas exposure.
+```{r bar}
+ggplot(
+  data[!is.na(smoke_gas_exposure) & !is.na(obesity_level)],
+  mapping = aes(x = obesity_level, fill = smoke_gas_exposure))+
+  geom_bar()+
+  labs(title = "Barchart of BMI by smoke-gas-exposure", x = "BMI_category")+
+  scale_fill_brewer(palette = "Reds")
+```
+
+For all bmi categories, the order of number of counts from greater to smaller is both_exposure, gas_exposure, no_exposure and smoke_exposure.
 
 Statistical summary graphs of FEV by BMI and FEV by smoke/gas exposure category.
 
