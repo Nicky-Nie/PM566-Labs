@@ -177,7 +177,7 @@ summary(data$pm25_mass)
 ### Facet plot showing scatterplots with regression lines of BMI vs FEV by “townname”.
 ```{r scatterplots}
 ggplot(
-  data[!is.na(bmi)],
+  data[!is.na(bmi)&!is.na(fev)],
   mapping = aes(x = bmi, y = fev, color = townname))+
   geom_point()+
   geom_smooth(method = "lm", color = "black")+
@@ -249,5 +249,15 @@ leaflet(data)%>%
   addCircles(lat =~ lat, lng =~ lon, color =~ pal(pm25_mass), opacity=1, fillOpacity=1, radius=500)%>%
   addLegend("bottomleft", pal = pal, values = data$pm25_mass, title="concentration of PM2.5 Mass in each communities", opacity=1)
 ```
+The pm2.5 mass is radial centered and greatest around Riverside, probably because of the mountain fire.
 
-Choose a visualization to examine whether PM2.5 mass is associated with FEV.
+### Choose a visualization to examine whether PM2.5 mass is associated with FEV.
+```{r points}
+ggplot(
+  data[!is.na(pm25_mass)&!is.na(fev)],
+  mapping = aes(x = pm25_mass, y = fev))+
+  geom_point()+
+  geom_smooth()
+```
+
+I think there is no association between fev and pm2.5 mass
