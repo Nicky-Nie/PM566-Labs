@@ -13,6 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(data.table)
 library(dplyr)
+library(leaflet)
 ```
 
 # Data Wrangling
@@ -172,3 +173,44 @@ summary(data$smoke_gas_exposure)
 summary(data$pm25_mass)
 ```
 
+### Facet plot showing scatterplots with regression lines of BMI vs FEV by “townname”.
+```{r scatterplots}
+ggplot(
+  data[!is.na(bmi)],
+  mapping = aes(x = bmi, y = fev, color = townname))+
+  geom_point()+
+  geom_smooth(method = "lm", color = "black")+
+  facet_wrap(~townname)+
+  labs(title = "Scatterplots of BMI vs FEV by townname", x = "BMI", y = "FEV")
+```
+
+From the graph, we can see that bmi has a positive association with fev for all towns. The change in fev is greater in Upland when bmi changes and least in Alpine.
+
+### Stacked histograms of FEV by BMI category and FEV by smoke/gas exposure. Use different color schemes than the ggplot default.
+```{r his_by_bmi}
+ggplot(
+  data[!is.na(obesity_level) & !is.na(fev)],
+  mapping = aes(x = fev, fill = obesity_level))+
+  geom_histogram()+
+  labs(title = "Histogram of FEV by BMI category", x = "FEV")+
+  scale_fill_brewer(palette = "RdPu")
+```
+It seems that for the category of Normal, it follows a normal distribution and no clear distribution for other categories.
+
+```{r his_by_exp}
+ggplot(
+  data[!is.na(smoke_gas_exposure) & !is.na(fev)],
+  mapping = aes(x = fev, fill = smoke_gas_exposure))+
+  geom_histogram()+
+  labs(title = "Histogram of FEV by smoke-gas-exposure", x = "FEV")+
+  scale_fill_brewer(palette = "GnBu")
+```
+In this graph, it seems that all the the distribution for all the categories is normal distribution.
+
+Barchart of BMI by smoke/gas exposure.
+
+Statistical summary graphs of FEV by BMI and FEV by smoke/gas exposure category.
+
+A leaflet map showing the concentrations of PM2.5 mass in each of the CHS communities.
+
+Choose a visualization to examine whether PM2.5 mass is associated with FEV.
