@@ -1,0 +1,53 @@
+---
+title: "Lab_07"
+author: "NickyNie"
+date: "10/8/2021"
+output: 
+  - html_document
+  - github_document
+always_allow_html: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(httr)
+library(xml2)
+library(stringr)
+```
+
+# Question 1
+## Downloading the website
+```{r download}
+website <- xml2::read_html("https://pubmed.ncbi.nlm.nih.gov/?term=sars-cov-2")
+```
+
+```{r counts}
+# Finding the counts
+counts <- xml2::xml_find_first(website, "/html/body/main/div[9]/div[2]/div[2]/div[1]")
+
+counts <- xml2::xml_find_first(website,'//*[@id="search-results"]/div[2]/div[1]')
+
+# Turning it into text
+counts <- as.character(counts)
+
+# Extracting the data using regex
+stringr::str_extract(counts, "[0-9,]+")
+stringr::str_extract(counts, "[[:digit:],]+")
+stringr::str_replace(counts, "[^[:digit:]]+([[:digit:]]+),([[:digit:]]+)[^[:digit:]]+", "\\1\\2")
+```
+
+# Question 2
+```{r hawaii}
+query_ids <- GET(
+  url   = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi",
+  query = list(db= 'pubmed',
+                term= 'covid19 hawaii',
+                  retmax= '1000')
+)
+# Extracting the content of the response of GET
+ids <- httr::content(query_ids)
+ids
+```
+
+
+
