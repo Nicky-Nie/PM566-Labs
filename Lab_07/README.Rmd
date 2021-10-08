@@ -79,5 +79,28 @@ publications <- httr::content(publications)
 publications_txt <- as.character(publications)
 ```
 
+# Question 4
+## University of / Institute of 
+```{r university/institution}
+institution <- str_extract_all(
+  str_to_lower(publications_txt),
+  "university\\s+of\\s+[[:alpha:]-]+|[[:alpha:]-]+\\s+institute\\s+of\\s+[[:alpha:]-]+"
+  ) 
+institution <- unlist(institution)
+table(institution)
+```
+
+## School of / Department of
+```{r school/department}
+school <- str_extract_all(
+  str_to_lower(publications_txt),
+  "school\\s+of\\s+[[:alpha:]-]+|[[:alpha:]-]+\\s+department\\s+of\\s+[[:alpha:]-]+"
+  ) 
+school <- unlist(school)
+table(school)
+```
+
+
+# Question 5
 
 
