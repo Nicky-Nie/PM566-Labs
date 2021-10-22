@@ -1,0 +1,90 @@
+---
+title: "midterm"
+author: "NickyNie"
+date: "10/20/2021"
+output: html_document
+---
+# Introduction
+This dataset is a collaboration between the COVID Tracking Project and the Boston University Center for Antiracist Research, which shows the counts of cases/death of COVID-19 catrgotized by races for each states in United States. The data was collected from April 12,2020 to March 07,2021. 
+
+## Question: Is death from COVID-19 associated with races?
+### Are the trends of incidence/death of different races same across the year in the country level?
+### Is the trend in CA similar to that in the country level?
+### What are top 5 states with highest death rate from COVID-19 for different races?
+
+# Method
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(data.table)
+library(dplyr)
+library(tidytext)
+library(tidyverse)
+library(tidyr)
+```
+
+## Download data
+I download data in csv form from The COVID Tracking Project https://covidtracking.com/race
+```{r download}
+race <- fread("CRDT.csv")
+```
+
+## Preprocessing data
+
+```{r look at NAs}
+tab <- race[, .(
+NA_total = sum(is.na(race$Cases_Total)),
+NA_white = sum(is.na(race$Cases_White)),
+NA_black = sum(is.na(race$Cases_Black)),
+NA_latinx = sum(is.na(race$Cases_Latinx)),
+NA_asian = sum(is.na(race$Cases_Asian)),
+NA_AIAN = sum(is.na(race$Cases_AIAN)),
+NA_NHPI = sum(is.na(race$Cases_NHPI)),
+NA_multi = sum(is.na(race$Cases_Multiracial))
+)]
+knitr::kable(tab)
+```
+
+Based on this table, I decided to take a close look at data of Total, White, Black and Asian since races like Latinx, AIAN, NHPI and multiracial have almost half of missing data, which is not suitable for further analysis. And for the three races categories left, I dropped all the NAs for further analysis. 
+
+I created two new datasets, one is based on state and another is based on country. Then I calculated death rates based on races of each dataset.
+
+
+```{r preprocess}
+# pick up interested variables
+race_state <- unique(race[,.(Date,State,Cases_Total,Cases_White,Cases_Black,Cases_Asian,Deaths_Total,Deaths_White,Deaths_Black,Deaths_Asian)])
+
+# drop NAs
+race_state <- race_state[!is.na(Cases_Total)]
+race_state <- race_state[!is.na(Cases_White)]
+race_state <- race_state[!is.na(Cases_Black)]
+race_state <- race_state[!is.na(Cases_Asian)]
+race_state <- race_state[!is.na(Deaths_Total)]
+race_state <- race_state[!is.na(Deaths_White)]
+race_state <- race_state[!is.na(Deaths_Black)]
+race_state <- race_state[!is.na(Deaths_Asian)]
+sum(is.na(race_state))
+
+# Calculate total cases of different races based on date
+race_country <- race_state[,.(
+  Case_total = sum(Cases_Total),
+  Case_white = sum(Cases_White),
+  Case_black = sum(Cases_Black),
+  Case_asian = sum(Cases_Asian),
+  Death_total = sum(Deaths_Total),
+  Death_white = sum(Deaths_White),
+  Death_black = sum(Deaths_Black),
+  Death_asian = sum(Deaths_Asian)
+), by = Date]
+
+# Calculate death rate
+race_state[, DR_total := Deaths_Total/Cases_Total]
+race_state[, DR_white := Deaths_White/Cases_White]
+race_state[, DR_black := Deaths_Black/Cases_Black]
+race_state[, DR_asian := Deaths_Asian/Cases_Asian]
+race_country[, DR_total := Death_total/Case_total]
+race_country[, DR_white := Death_white/Case_white]
+race_country[, DR_black := Death_black/Case_black]
+race_country[, DR_asian := Death_asian/Case_asian]
+```
+
+
