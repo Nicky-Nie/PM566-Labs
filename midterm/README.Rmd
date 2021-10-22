@@ -11,6 +11,7 @@ This dataset is a collaboration between the COVID Tracking Project and the Bosto
 ### Are the trends of incidence/death of different races same across the year in the country level?
 ### Is the trend in CA similar to that in the country level?
 ### What are top 5 states with highest death rate from COVID-19 for different races?
+### Which race with highest death rate in each state?
 
 # Method
 ```{r setup, include=FALSE}
@@ -46,7 +47,7 @@ knitr::kable(tab)
 
 Based on this table, I decided to take a close look at data of Total, White, Black and Asian since races like Latinx, AIAN, NHPI and multiracial have almost half of missing data, which is not suitable for further analysis. And for the three races categories left, I dropped all the NAs for further analysis. 
 
-I created two new datasets, one is based on state and another is based on country. Then I calculated death rates based on races of each dataset.
+I firstly created two new datasets, one is based on state(race_state) and another(race_country) is based on country. Then I calculated death rates based on races of each dataset. And since the number of cases and deaths are cumulative, I chose the latest data(2021.03.07) and created a new dataset called "latest" to find the race with highest death rate in each state.
 
 
 ```{r preprocess}
@@ -66,10 +67,10 @@ sum(is.na(race_state))
 
 # Calculate total cases of different races based on date
 race_country <- race_state[,.(
-  Case_total = sum(Cases_Total),
-  Case_white = sum(Cases_White),
-  Case_black = sum(Cases_Black),
-  Case_asian = sum(Cases_Asian),
+  Case_total  = sum(Cases_Total),
+  Case_white  = sum(Cases_White),
+  Case_black  = sum(Cases_Black),
+  Case_asian  = sum(Cases_Asian),
   Death_total = sum(Deaths_Total),
   Death_white = sum(Deaths_White),
   Death_black = sum(Deaths_Black),
@@ -77,14 +78,21 @@ race_country <- race_state[,.(
 ), by = Date]
 
 # Calculate death rate
-race_state[, DR_total := Deaths_Total/Cases_Total]
-race_state[, DR_white := Deaths_White/Cases_White]
-race_state[, DR_black := Deaths_Black/Cases_Black]
-race_state[, DR_asian := Deaths_Asian/Cases_Asian]
+race_state  [, DR_total := Deaths_Total/Cases_Total]
+race_state  [, DR_white := Deaths_White/Cases_White]
+race_state  [, DR_black := Deaths_Black/Cases_Black]
+race_state  [, DR_asian := Deaths_Asian/Cases_Asian]
 race_country[, DR_total := Death_total/Case_total]
 race_country[, DR_white := Death_white/Case_white]
 race_country[, DR_black := Death_black/Case_black]
 race_country[, DR_asian := Death_asian/Case_asian]
+
+# Race with highest DR in each state.
+latest <- filter(race_state, Date == "20210307")
+latest <- latest[, highest_DR := 
+         fifelse(DR_white == max(DR_white,DR_black,DR_asian),"White",
+          fifelse(DR_black == max(DR_white,DR_black,DR_asian),"Black","Asian"
+          )), by = State]
 ```
 
-
+# Preliminary Results
