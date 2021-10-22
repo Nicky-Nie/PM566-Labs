@@ -113,3 +113,18 @@ ggplot(data = race_country) +
   theme(axis.text.x = element_text(angle=90, hjust=1, vjust=1))
 ```
 
+From this graph, we can see that the trend of all DR is gradually decreasing, the total death rate is always the lowest one since there are a lot of cases of other or unknown races which largely increase the denominator. And although death rate of white is higher than the other two races initially, they approach to the same level finally with a little bit of difference.
+
+```{r CA}
+ggplot(data = CA) + 
+  geom_point(mapping = aes(x = Date, y = DR_white, color = "DR_white"))+
+  geom_point(mapping = aes(x = Date, y = DR_black, color = "DR_black"))+
+  geom_point(mapping = aes(x = Date, y = DR_asian, color = "DR_asian"))+
+  geom_point(mapping = aes(x = Date, y = DR_total,color = "DR_total"))+
+  labs(x = "Date", y = "Death Rate")+
+  labs(title = "COVID-19 Death rate of different races in California")+
+  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=1))
+```
+
+The general trend is similar to that of country but it seems that four lines go up slightly at last. But we can still see a trend of DR of three races approaching to the same level at the final stage of the data.
+
