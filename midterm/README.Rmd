@@ -128,3 +128,21 @@ ggplot(data = CA) +
 
 The general trend is similar to that of country but it seems that four lines go up slightly at last. But we can still see a trend of DR of three races approaching to the same level at the final stage of the data.
 
+```{r top5}
+top5_total <- latest[order(DR_total,decreasing = TRUE)][1:5]
+top5_total
+top5_white <- latest[order(DR_white,decreasing = TRUE)][1:5]
+top5_white
+top5_black <- latest[order(DR_black,decreasing = TRUE)][1:5]
+top5_black
+top5_asian <- latest[order(DR_asian,decreasing = TRUE)][1:5]
+top5_asian
+```
+
+The top5 states with highest death rate of total are  `r top5_total$State`
+
+The top5 states with highest death rate of white are  `r top5_white$State`
+
+The top5 states with highest death rate of black are  `r top5_black$State`
+
+The top5 states with highest death rate of asian are  `r top5_asian$State`
