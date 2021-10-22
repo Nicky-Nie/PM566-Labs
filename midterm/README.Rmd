@@ -21,6 +21,7 @@ library(dplyr)
 library(tidytext)
 library(tidyverse)
 library(tidyr)
+library(ggforce)
 ```
 
 ## Download data
@@ -47,12 +48,14 @@ knitr::kable(tab)
 
 Based on this table, I decided to take a close look at data of Total, White, Black and Asian since races like Latinx, AIAN, NHPI and multiracial have almost half of missing data, which is not suitable for further analysis. And for the three races categories left, I dropped all the NAs for further analysis. 
 
-I firstly created two new datasets, one is based on state(race_state) and another(race_country) is based on country. Then I calculated death rates based on races of each dataset. And since the number of cases and deaths are cumulative, I chose the latest data(2021.03.07) and created a new dataset called "latest" to find the race with highest death rate in each state.
+I firstly created two new datasets, one is based on state(race_state) and another(race_country) is based on country. Then I calculated death rates based on races of each dataset. I also created a dataset of CA to see if pattern in CA is similar to the pattern of the whole country. And since the number of cases and deaths are cumulative, I chose the latest data(2021.03.07) and created a new dataset called "latest" to find the race with highest death rate in each state.
 
 
-```{r preprocess}
+```{r preprocess, warning=FALSE}
 # pick up interested variables
 race_state <- unique(race[,.(Date,State,Cases_Total,Cases_White,Cases_Black,Cases_Asian,Deaths_Total,Deaths_White,Deaths_Black,Deaths_Asian)])
+# since date here shows to be integer, I changed them into str
+race_state$Date <- as.character(race_state$Date)
 
 # drop NAs
 race_state <- race_state[!is.na(Cases_Total)]
@@ -87,6 +90,9 @@ race_country[, DR_white := Death_white/Case_white]
 race_country[, DR_black := Death_black/Case_black]
 race_country[, DR_asian := Death_asian/Case_asian]
 
+# Stick to CA data
+CA <- filter(race_state, State == "CA")
+
 # Race with highest DR in each state.
 latest <- filter(race_state, Date == "20210307")
 latest <- latest[, highest_DR := 
@@ -96,3 +102,14 @@ latest <- latest[, highest_DR :=
 ```
 
 # Preliminary Results
+```{r country}
+ggplot(data = race_country) + 
+  geom_point(mapping = aes(x = Date, y = DR_white, color = "DR_white"))+
+  geom_point(mapping = aes(x = Date, y = DR_black, color = "DR_black"))+
+  geom_point(mapping = aes(x = Date, y = DR_asian, color = "DR_asian"))+
+  geom_point(mapping = aes(x = Date, y = DR_total,color = "DR_total"))+
+  labs(x = "Date", y = "Death Rate")+
+  labs(title = "COVID-19 Death rate of different races in United States")+
+  theme(axis.text.x = element_text(angle=90, hjust=1, vjust=1))
+```
+
