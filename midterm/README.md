@@ -75,14 +75,7 @@ race_state <- unique(race[,.(Date,State,Cases_Total,Cases_White,Cases_Black,Case
 race_state$Date <- as.character(race_state$Date)
 
 # drop NAs
-race_state <- race_state[!is.na(Cases_Total)]
-race_state <- race_state[!is.na(Cases_White)]
-race_state <- race_state[!is.na(Cases_Black)]
-race_state <- race_state[!is.na(Cases_Asian)]
-race_state <- race_state[!is.na(Deaths_Total)]
-race_state <- race_state[!is.na(Deaths_White)]
-race_state <- race_state[!is.na(Deaths_Black)]
-race_state <- race_state[!is.na(Deaths_Asian)]
+race_state <- race_state[!is.na(Cases_Total) & !is.na(Cases_White) & !is.na(Cases_Black) & !is.na(Cases_Asian) & !is.na(Deaths_Total) & !is.na(Deaths_White) & !is.na(Deaths_Black) & !is.na(Deaths_Asian)]
 sum(is.na(race_state))
 ```
 
