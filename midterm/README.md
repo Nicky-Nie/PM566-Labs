@@ -7,9 +7,9 @@ NickyNie
 
 This dataset is a collaboration between the COVID Tracking Project and
 the Boston University Center for Antiracist Research, which shows the
-counts of cases/death of COVID-19 catrgotized by races for each states
-in United States. The data was collected from April 12,2020 to March
-07,2021.
+counts of cases/deaths of COVID-19 catrgotized by races for each state
+in United States. The data was collected from April 12, 2020 to March
+07, 2021.
 
 ## Main Question: Is death from COVID-19 associated with races?
 
