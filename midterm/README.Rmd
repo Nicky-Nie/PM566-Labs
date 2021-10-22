@@ -1,17 +1,26 @@
 ---
-title: "midterm"
+title: "Midterm Project"
 author: "NickyNie"
 date: "10/20/2021"
-output: html_document
+output:
+  github_document:
+  html_document:
+    html_preview: false
+always_allow_html: true
 ---
+
 # Introduction
 This dataset is a collaboration between the COVID Tracking Project and the Boston University Center for Antiracist Research, which shows the counts of cases/death of COVID-19 catrgotized by races for each states in United States. The data was collected from April 12,2020 to March 07,2021. 
 
-## Question: Is death from COVID-19 associated with races?
-### Are the trends of incidence/death of different races same across the year in the country level?
-### Is the trend in CA similar to that in the country level?
-### What are top 5 states with highest death rate from COVID-19 for different races?
-### Which race with highest death rate in each state?
+## Main Question: Is death from COVID-19 associated with races?
+
+#### Sub Questions:
+#### 1.Are the trends of incidence/death of different races same across the year in the country level?
+#### 2.Is the trend in CA similar to that in the country level?
+#### 3.What are top 5 states with highest death rate from COVID-19 for different races?
+#### 4.Which race with highest death rate in each state?
+
+
 
 # Method
 ```{r setup, include=FALSE}
@@ -24,13 +33,13 @@ library(tidyr)
 library(ggforce)
 ```
 
-## Download data
+### Download data
 I download data in csv form from The COVID Tracking Project https://covidtracking.com/race
 ```{r download}
 race <- fread("CRDT.csv")
 ```
 
-## Preprocessing data
+### Preprocessing data
 
 ```{r look at NAs}
 tab <- race[, .(
@@ -101,6 +110,7 @@ latest <- latest[, highest_DR :=
           )), by = State]
 ```
 
+
 # Preliminary Results
 ```{r country}
 ggplot(data = race_country) + 
@@ -146,3 +156,19 @@ The top5 states with highest death rate of white are  `r top5_white$State`
 The top5 states with highest death rate of black are  `r top5_black$State`
 
 The top5 states with highest death rate of asian are  `r top5_asian$State`
+
+```{r table}
+tab <- latest[, .(
+  N_states  = .N,
+  avg_DR_white = mean(DR_white),
+  avg_DR_black = mean(DR_black),
+  avg_DR_asian = mean(DR_asian)
+), by = highest_DR]
+
+knitr::kable(tab)
+```
+
+
+# Conclusion
+Just from these data, I think there is no clear association between races and death rate of COVID-19. Both in CA and country level, the death rate of all three races approach to the same level finally. And for top5 states with highest death rate in each race, TX is top1 of all three races and MA, NJ, CT, PA, MI also appear more than one time. Hence, in my opinion, the death rate is highly depend on the action of the State rather than races, for example, the burden of medical system, the policy to restrict COVID-19 etc. Although the number of states with DR_white to be the highest DR among three races is greatest (30), the difference among average DR is not that so great. This probably is caused by samples collection. The majority of United States population is white, hence the data collected in white might be greater, leading to a relatively higher DR.
+I saw a lot of data showed a different result from these data, which indicated that death rate of black is highest among all races. That might be caused by inequality of medical distribution at the stage of onset of COVID-19. As the burden of medical resource relieved and government took action to restrict COVID-19 and gave supports to citizens, I believe that death rate that approaches to the same level is a right trend.
