@@ -13,6 +13,11 @@ knitr::opts_chunk$set(echo = TRUE)
 library(httr)
 library(xml2)
 library(stringr)
+library(dplyr)
+library(tidytext)
+library(tidyverse)
+library(tidyr)
+library(ggplot2)
 ```
 
 ## APIs
@@ -22,14 +27,14 @@ Using the list of pubmed ids you retrieved, download each papers’ details usin
 
 As we did in lab 7. Create a dataset containing the following:
 
-Pubmed ID number,
-Title of the paper,
-Name of the journal where it was published,
-Publication date, and
-Abstract of the paper (if any).
+1. Pubmed ID number,
+2. Title of the paper,
+3. Name of the journal where it was published,
+4. Publication date, and
+5. Abstract of the paper (if any).
 
 
-```{r }
+```{r counts}
 # Downloading the website
 website <- xml2::read_html("https://pubmed.ncbi.nlm.nih.gov/?term=sars-cov-2+trial+vaccine")
 
@@ -107,9 +112,146 @@ database <- data.frame(
 knitr::kable(database[1:20,], caption = "Some papers about Covid19 trail vaccine")
 ```
 
-Text Mining
+## Text Mining
 A new dataset has been added to the data science data repository https://github.com/USCbiostats/data-science-data/tree/master/03_pubmed. The dataset contains 3241 abstracts from articles across 5 search terms. Your job is to analyse these abstracts to find interesting insights.
 
-Tokenize the abstracts and count the number of each token. Do you see anything interesting? Does removing stop words change what tokens appear as the most frequent? What are the 5 most common tokens for each search term after removing stopwords?
-Tokenize the abstracts into bigrams. Find the 10 most common bigram and visualize them with ggplot2.
-Calculate the TF-IDF value for each word-search term combination. (here you want the search term to be the “document”) What are the 5 tokens from each search term with the highest TF-IDF value? How are the results different from the answers you got in question 1?
+1. Tokenize the abstracts and count the number of each token. Do you see anything interesting? Does removing stop words change what tokens appear as the most frequent? What are the 5 most common tokens for each search term after removing stopwords?
+
+2.Tokenize the abstracts into bigrams. Find the 10 most common bigram and visualize them with ggplot2.
+
+3.Calculate the TF-IDF value for each word-search term combination. (here you want the search term to be the “document”) What are the 5 tokens from each search term with the highest TF-IDF value? How are the results different from the answers you got in question 1?
+
+```{r download}
+dataset <- read.csv("https://raw.githubusercontent.com/USCbiostats/data-science-data/master/03_pubmed/pubmed.csv")
+```
+
+
+### Question 1
+```{r covid_top_10}
+dataset %>%
+  filter(term == "covid") %>%
+  unnest_tokens(token, abstract, token = "words") %>%
+  count(token, sort = TRUE) %>%
+  top_n(10,n) %>%
+  ggplot(aes(n, fct_reorder(token, n)))+
+  geom_col()+
+  labs(title = "Top 10 Most Frequent Words in Abstracts of Term 'covid'")
+```
+
+```{r meningitis_top_10}
+dataset %>%
+  filter(term == "meningitis") %>%
+  unnest_tokens(token, abstract, token = "words") %>%
+  count(token, sort = TRUE) %>%
+  top_n(10,n) %>%
+  ggplot(aes(n, fct_reorder(token, n)))+
+  geom_col()+
+  labs(title = "Top 10 Most Frequent Words in Abstracts of Term 'meningitis'")
+```
+
+```{r prostate_cancer_top_10}
+dataset %>%
+  filter(term == "prostate cancer") %>%
+  unnest_tokens(token, abstract, token = "words") %>%
+  count(token, sort = TRUE) %>%
+  top_n(10,n) %>%
+  ggplot(aes(n, fct_reorder(token, n)))+
+  geom_col()+
+  labs(title = "Top 10 Most Frequent Words in Abstracts of Term 'prostate cancer'")
+```
+
+```{r cystic_fibrosis_top_10}
+dataset %>%
+  filter(term == "cystic fibrosis") %>%
+  unnest_tokens(token, abstract, token = "words") %>%
+  count(token, sort = TRUE) %>%
+  top_n(10,n) %>%
+  ggplot(aes(n, fct_reorder(token, n)))+
+  geom_col()+
+  labs(title = "Top 10 Most Frequent Words in Abstracts of Term 'cystic fibrosis'")
+```
+
+```{r preeclampsia_top_10}
+dataset %>%
+  filter(term == "preeclampsia") %>%
+  unnest_tokens(token, abstract, token = "words") %>%
+  count(token, sort = TRUE) %>%
+  top_n(10,n) %>%
+  ggplot(aes(n, fct_reorder(token, n)))+
+  geom_col()+
+  labs(title = "Top 10 Most Frequent Words in Abstracts of Term 'preeclampsia'")
+```
+
+For top ten words in each search term, most are link words/stop words and search term themselves, and for meningistis, even itself is not in top 10, such results are meaningless for us to analyze.
+
+```{r covid_top_10_nostop}
+dataset %>%
+  filter(term == "covid") %>%
+  unnest_tokens(token, abstract, token = "words") %>%
+  anti_join(stop_words, by = c("token" = "word")) %>%
+  count(token, sort = TRUE) %>%
+  top_n(10,n) %>%
+  ggplot(aes(n, fct_reorder(token, n)))+
+  geom_col()+
+  labs(title = "Top 10 Most Frequent Words in Abstracts of Term 'covid'")
+```
+
+```{r meningitis_top_10_nostop}
+dataset %>%
+  filter(term == "meningitis") %>%
+  unnest_tokens(token, abstract, token = "words") %>%
+  anti_join(stop_words, by = c("token" = "word")) %>%
+  count(token, sort = TRUE) %>%
+  top_n(10,n) %>%
+  ggplot(aes(n, fct_reorder(token, n)))+
+  geom_col()+
+  labs(title = "Top 10 Most Frequent Words in Abstracts of Term 'meningitis'")
+```
+
+```{r prostate_cancer_top_10_nostop}
+dataset %>%
+  filter(term == "prostate cancer") %>%
+  unnest_tokens(token, abstract, token = "words") %>%
+  anti_join(stop_words, by = c("token" = "word")) %>%
+  count(token, sort = TRUE) %>%
+  top_n(10,n) %>%
+  ggplot(aes(n, fct_reorder(token, n)))+
+  geom_col()+
+  labs(title = "Top 10 Most Frequent Words in Abstracts of Term 'prostate cancer'")
+```
+
+```{r cystic_fibrosis_top_10_nostop}
+dataset %>%
+  filter(term == "cystic fibrosis") %>%
+  unnest_tokens(token, abstract, token = "words") %>%
+  anti_join(stop_words, by = c("token" = "word")) %>%
+  count(token, sort = TRUE) %>%
+  top_n(10,n) %>%
+  ggplot(aes(n, fct_reorder(token, n)))+
+  geom_col()+
+  labs(title = "Top 10 Most Frequent Words in Abstracts of Term 'cystic fibrosis'")
+```
+
+```{r preeclampsia_top_10_nostop}
+dataset %>%
+  filter(term == "preeclampsia") %>%
+  unnest_tokens(token, abstract, token = "words") %>%
+  anti_join(stop_words, by = c("token" = "word")) %>%
+  count(token, sort = TRUE) %>%
+  top_n(10,n) %>%
+  ggplot(aes(n, fct_reorder(token, n)))+
+  geom_col()+
+  labs(title = "Top 10 Most Frequent Words in Abstracts of Term 'preeclampsia'")
+```
+
+Removing all stop words change what tokens appear as the most frequent.
+
+For term "covid", the top 5 words are "covid" "19""patients""disease""pandemic"
+
+For term "meningistis", the top 5 words are "patients" "meningistis""meningeal""csf""clinical"
+
+For term "prostate cancer", the top 5 words are "cancer" "prostate""patients""treatment""disease"
+
+For term "cystic fibrosis", the top 5 words are "fibrosis""cystic""cf" "patients""disease"
+
+For term "preeclampsia", the top 5 words are "pre""eclampsia""preeclampsia" "women""pregnancy"
