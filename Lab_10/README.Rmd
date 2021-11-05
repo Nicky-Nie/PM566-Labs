@@ -1,7 +1,6 @@
 ---
 title: "Lab_10"
 author: "NickyNie"
-date: "2021/11/5"
 output: 
   - html_document
   - github_document
