@@ -1,11 +1,9 @@
 ---
 title: "Lab_09"
 author: "NickyNie"
-date: "10/29/2021"
 output:
-  html_document:
-    html_preview: false
-  github_document:
+  - html_document
+  - github_document
 always_allow_html: true
 ---
 
