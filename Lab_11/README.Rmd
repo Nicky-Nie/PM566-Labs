@@ -258,14 +258,14 @@ Create a line chart of the naive_CFR for all states over time using plot_ly()
 Use the zoom and pan tools to inspect the naive_CFR for the states that had an increase in September. How have they changed over time?
 Create one more line chart, for Florida only, which shows new_cases and new_deaths together in one plot. Hint: use add_layer()
 Use hoverinfo to “eyeball” the approximate peak of deaths and peak of cases. What is the time delay between the peak of cases and the peak of deaths?
-```{r}
+```{r warning = FALSE}
 ### FINISH CODE HERE
 # Line chart for naive_CFR for all states over time using `plot_ly()`
-plot_ly(cv_states, x = ~date, y = ~_______, color = ~state, type = "scatter", mode = "lines")
+plot_ly(cv_states, x = ~date, y = ~naive_CFR, color = ~state, type = "scatter", mode = "lines")
 
 ### FINISH CODE HERE
 # Line chart for Florida showing new_cases and new_deaths together
-cv_states %>% filter(state=="Florida") %>% plot_ly(x = ~date, y = ~new_cases, type = "scatter", mode = "lines") %>% _______(x = ~date, y = ~new_deaths, type = "scatter", mode = "lines") 
+cv_states %>% filter(state=="Florida") %>% plot_ly(x = ~date, y = ~new_cases, type = "scatter", mode = "lines") %>% add_lines(x = ~date, y = ~new_deaths, type = "scatter", mode = "lines") 
 ```
 
 ## 9. Heatmaps
