@@ -3,6 +3,8 @@ Lab\_11
 NickyNie
 11/12/2021
 
+**See my lab output** [**here**](https://ghcdn.rawgit.org/Nicky-Nie/PM566-Labs/main/Lab_11/README.html)
+
 # I. Reading and processing the New York Times (NYT) state-level COVID-19 data
 
 ## 1\. Read in the data
