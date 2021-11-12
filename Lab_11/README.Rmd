@@ -1,6 +1,6 @@
 ---
 title: "Lab_11"
-author: "NickyNie"
+author: "Nicky_Nie"
 date: "11/12/2021"
 output: html_document
 link-citations: yes
