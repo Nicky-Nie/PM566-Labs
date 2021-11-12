@@ -2,11 +2,14 @@
 title: "Lab_11"
 author: "NickyNie"
 date: "11/12/2021"
-output: 
-  - html_document
-  - github_document
+output: html_document
+link-citations: yes
+editor_options: 
+  chunk_output_type: console
 always_allow_html: true
 ---
+
+**See my lab output** [**here**](https://ghcdn.rawgit.org/Nicky-Nie/PM566-Labs/main/Lab_11/README.html)
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
