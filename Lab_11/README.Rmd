@@ -105,6 +105,7 @@ library(dplyr)
 library(ggplot2)
 library(plotly)
 # Add variables for new_cases and new_deaths:
+state_list = unique(cv_states$state)
 for (i in 1:length(state_list)) {
   cv_subset = subset(cv_states, state == state_list[i])
   cv_subset = cv_subset[order(cv_subset$date),]
