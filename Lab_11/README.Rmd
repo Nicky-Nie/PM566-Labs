@@ -9,7 +9,7 @@ editor_options:
 always_allow_html: true
 ---
 
-**See my lab output** [**here**](https://ghcdn.rawgit.org/Nicky-Nie/PM566-Labs/main/Lab_11/README.html)
+**See my lab output** [**here**](https://ghcdn.rawgit.org/Nicky-Nie/PM566-Labs/master/Lab_11/README.html)
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
